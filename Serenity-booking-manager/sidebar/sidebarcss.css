@@ -1,0 +1,163 @@
+.loading-screen {
+    position: fixed; /* Sit on top of the page content */
+    display: none; 
+    /*Hidden by default */
+    width: 100%; /* Full width (cover the whole page) */
+    height: 100%; /* Full height (cover the whole page) */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer; /* Add a pointer on hover */
+    text-align: center;
+}
+
+.loader-container{
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.loader {
+    display: inline-block;
+    margin: auto;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+body *{
+    /* font-family: "Google Sans",Roboto,RobotoDraft,Helvetica,Arial,sans-serif; */
+    font-family: "Google Sans", sans-serif;
+    /* font-family: Arial, Helvetica, sans-serif; */
+}
+.container, .input-block-wrapper{
+    width: 100%;
+}
+
+.input-block-wrapper{
+    margin-bottom: 10px;
+}
+
+.label{
+    font-size: 17px;
+    font-weight: 500;
+    margin: 12 0 7 0;
+}
+
+.input-wrapper *{
+    width: 100%;
+    height: 23px;
+    margin-bottom: 5px;
+    border: solid 1px #8f8f8f;
+    border-radius: 3px;
+    padding-left: 3px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.input-wrapper select{
+    height: 35px;
+}
+
+input:focus{
+    border: solid 2px #1a73e8;
+    box-shadow: none;
+    
+}
+
+.input-wrapper textarea{
+    height: initial;
+}
+
+.container .input-block-wrapper:last-child{
+    text-align: end;
+}
+
+.error-message{
+    display: none;
+    font-size: small;
+    /* font-weight: bold; */
+    color: red;
+    text-align: left;
+}
+
+.error{
+
+    border:solid 2px #ff5d5d;
+}
+
+/* .creditcard{
+    transform: all 0.2s;
+} */
+#cancelButton{
+    background-image: none;
+    /* border: 1px solid transparent!important; */
+    border-radius: 4px;
+    box-shadow: none;
+    box-sizing: border-box;
+    font-family: "Google Sans",Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    height: 36px;
+    letter-spacing: 0.25px;
+    line-height: 16px;
+    padding: 9px 24px 11px 24px;
+    background: white;
+    border: 1px solid #dadce0!important;
+    color: #188038;
+    margin-right: 20px;
+    /* height: 20px; */
+}
+
+#cancelButton:hover{
+    filter: brightness(95%);
+    -webkit-filter: brightness(95%);
+}
+#doneButton, .editButton{
+    background-image: none;
+    border: 1px solid transparent!important;
+    border-radius: 4px;
+    box-shadow: none;
+    box-sizing: border-box;
+    font-family: "Google Sans",Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    height: 36px;
+    letter-spacing: 0.25px;
+    line-height: 16px;
+    padding: 9px 24px 11px 24px;
+    background: #188038;
+    color: #fff;
+    /* padding: 9px 16px 10px 16px; */
+    text-transform: capitalize;
+}
+
+#doneButton:hover, .editButton:hover{
+    filter: brightness(110%);
+    -webkit-filter: brightness(110%);
+}
+
+.editButton{
+    background: #673ab7;
+}

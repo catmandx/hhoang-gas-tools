@@ -1,0 +1,28 @@
+{
+	"folders": [
+		{
+			"path": "high5-birthday-mail"
+		},
+		{
+			"path": "high5-contacts"
+		},
+		{
+			"path": "high5-expats-orders-generator"
+		},
+		{
+			"path": "high5-permission-sync"
+		},
+		{
+			"path": "Serenity-booking-manager"
+		},
+		{
+			"path": "high5-expats-orders"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "Serenity-booking-manager"
+	}
+}
