@@ -3,3 +3,5 @@ node_modules/**/.*/**
 .jshintsrc
 .vscode/**/.*
 sidebar/sidebarjs.js
+sidebar/sidebarcss.css
+sidebar/sidebarhtml.html
