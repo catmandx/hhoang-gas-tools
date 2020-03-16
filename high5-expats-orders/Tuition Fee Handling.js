@@ -56,7 +56,7 @@ function handleFeeOnTeacherChanged(info){
 //      expatName: expatName,
 //      oldTeacher: oldTeacher,
 //      oldTeacherEmail: oldTeacherEmail,
-//      newTeacher: newTeacher,
+//      teacherName: newTeacher,
 //      newTeacherEmail: newTeacherEmail,
 //      timeString: timeString,
 //      link: link,
@@ -65,7 +65,7 @@ function handleFeeOnTeacherChanged(info){
   var ss = SpreadsheetApp.openByUrl(trackingSpreadsheetUrl);
   var sheet = ss.getSheetByName("Tracking");
   var rowPos = findEntryPosition(sheet, info.oldTeacher, info.expatName); //exists
-  if(rowPos){return;}
+  if(!rowPos){return;}
   
   var linkToRow = ss.getUrl();
   linkToRow += '#gid=';
@@ -73,10 +73,10 @@ function handleFeeOnTeacherChanged(info){
   linkToRow += '&range='+rowPos+':'+rowPos;
   
   var teacherCell = sheet.getRange(rowPos, 2);
-  teacherCell.setValue(info.newTeacher);
-  var subject = info.oldTeacher+" chuyển thành "+ info.newTeacher +" với bạn "+info.expatName+" nè!!"
+  teacherCell.setValue(info.teacherName);
+  var subject = info.oldTeacher+" chuyển thành "+ info.teacherName +" với bạn "+info.expatName+" nè!!"
   
-  var message = "Bạn "+info.oldTeacher+" bán expat "+info.expatName+" cho bạn "+info.newTeacher+ "<br>"+
+  var message = "Bạn "+info.oldTeacher+" bán expat "+info.expatName+" cho bạn "+info.teacherName+ "<br>"+
                 "Link đến sheet order (xem thông tin expat):<br><a href="+info.link+">"+info.link+"</a><br>"+
                 "Link đến sheet theo dõi (để update):<br><a href="+linkToRow+">"+linkToRow+"</a>."+
                 "<br><br>"+"__"+"<br>"+
