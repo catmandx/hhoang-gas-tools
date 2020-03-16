@@ -71,14 +71,15 @@ function checkTeacherColumn(e){
       expatName: expatName,
       oldTeacher: oldTeacher,
       oldTeacherEmail: oldTeacherEmail,
-      newTeacher: newTeacher,
+      teacherName: newTeacher,
       newTeacherEmail: newTeacherEmail,
       timeString: timeString,
       link: link,
       log: logCell.getValue()
     };
-    console.log("Change teacher in money sheet");
-    handleFeeOnTeacherChanged(info);
+    console.log("Complete log:\n"+info);
+      console.log("Change teacher in money sheet");
+      handleFeeOnTeacherChanged(info);
   }
 }
 
@@ -145,6 +146,7 @@ function checkStatusAndLog(e){
         "link":link,
         "timeString":timeString
       }
+      console.log("Complete log:\n"+payload);
       if(status === "Đang set lịch học"){
         console.log("Dang set lich hoc, trigger 15 days with data: "+JSON.stringify(payload, null, "\n"));
         
