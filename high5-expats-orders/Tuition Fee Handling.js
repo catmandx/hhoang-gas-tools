@@ -1,5 +1,6 @@
 var trackingSpreadsheetUrl = "https://docs.google.com/spreadsheets/d/18pPMFgVlKmPfhP57IXKsA9AssgfOBhRygNVHzYHg8E8/edit#gid=0";
 var fromMail = "noreply@high5hanoi.edu.vn";
+var handlerDepartment = "financehigh5hanoi@gmail.com";
 
 function addToFeeTracker(info) {
   //Payload structure
@@ -47,7 +48,7 @@ function addToFeeTracker(info) {
                 "<br><br>"+"__"+"<br>"+
                 "<strong>HIGH5 HANOI</strong><br>Hotline: 0793991311 (<a href='https://fb.com/whohoi'>Mr. Hoang</a>) or <a href = 'mailto: hhoang.nov.13@gmail.com'>hhoang.nov.13@gmail.com</a>";
   var cosmetics = {htmlBody: message, fromMail: fromMail};
-  GmailApp.sendEmail("hrhigh5hanoi@gmail.com", subject, message, cosmetics);
+  GmailApp.sendEmail(handlerDepartment, subject, message, cosmetics);
 }
 
 function handleFeeOnTeacherChanged(info){
@@ -82,7 +83,7 @@ function handleFeeOnTeacherChanged(info){
                 "<br><br>"+"__"+"<br>"+
                 "<strong>HIGH5 HANOI</strong><br>Hotline: 0793991311 (<a href='https://fb.com/whohoi'>Mr. Hoang</a>) or <a href = 'mailto: hhoang.nov.13@gmail.com'>hhoang.nov.13@gmail.com</a>";
   var cosmetics = {htmlBody: message, fromMail: fromMail};
-  GmailApp.sendEmail("hrhigh5hanoi@gmail.com", subject, message, cosmetics);
+  GmailApp.sendEmail(handlerDepartment, subject, message, cosmetics);
 }
 
 function findEntryPosition(sheet, oldTeacher, expatName){
