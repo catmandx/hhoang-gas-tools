@@ -32,7 +32,8 @@ function addContacts(){
     'ED': 'Event Department',
     'CT': 'President',
     'CM': 'Class Management',
-    'fo':'President'
+    'fo': 'President',
+    'LD': 'Logistics Department'
   }
   var ss = SpreadsheetApp.openById("11IcDpPKb-CXlN724c9J5PbickjgoSIQkFJwlgi2-LIA");
   var sheet = ss.getSheetByName("Active Members");

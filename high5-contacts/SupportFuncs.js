@@ -93,16 +93,24 @@ function findRowNotInPeopleList(ppl, data, phoneIndex){
     var isInPeopleList = false;
     for(var j = 0; j < data.length; j++){
       var phone = data[j][phoneIndex];
-      if(ppl[i].phoneNumbers && ppl[i].phoneNumbers[0].canonicalForm.indexOf(phone) != -1){
+      if(ppl[i].phoneNumbers && 
+         ppl[i].phoneNumbers[0] && 
+         ppl[i].phoneNumbers[0].canonicalForm && 
+         ppl[i].phoneNumbers[0].canonicalForm.indexOf(phone) != -1){
         data.splice(j,1);
       }
     }
+  }
+  
+  var phonePrefix = "0";
+  for(let k = 0; k < data.length; k++){
+    data[k][phoneIndex] = phonePrefix + data[k][phoneIndex];
   }
   return data;
 }
 
 function testHamTren(){
-    var ss = SpreadsheetApp.openById("11IcDpPKb-CXlN724c9J5PbickjgoSIQkFJwlgi2-LIA");
+  var ss = SpreadsheetApp.openById("11IcDpPKb-CXlN724c9J5PbickjgoSIQkFJwlgi2-LIA");
   var sheet = ss.getSheetByName("Members");
   var data = sheet.getRange("B5:K10").getValues();
   var phoneIndex = 8; //cot J
@@ -122,10 +130,22 @@ function testHamTren(){
 }
 
 function createContactGroup(name){
+  var groups = People.ContactGroups.list();
+  for(var group of groups.contactGroups){
+    let groupName = group.name;
+    if(groupName == name){
+      return group;
+    }
+  }
+  
   var resource = {
     contactGroup:{
       name:name
     }
   }
   return People.ContactGroups.create(resource);
+}
+
+function testCreate(){
+  createContactGroup("High5 Hanoi")
 }

@@ -1,7 +1,7 @@
 function onOrderEdit(e){
   var sheet = e.range.getSheet()
   const sheetName = sheet.getName().trim();
-  
+//  SpreadsheetApp.getActiveSpreadsheet().toast("Running script!", "Alert!", 5)
   if(sheetName.indexOf("Expats' Orders") > -1 && 
      sheetName.substr(sheetName.length - 4) > 2018){
     checkStatusAndLog(e);
@@ -44,7 +44,7 @@ function checkTeacherColumn(e){
     if(e.oldValue == undefined){ //moi nhan
       oldTeacher = 'none';
       oldTeacherEmail = 'none';
-      logCell.setValue(timeString+": "+newTeacher+" - "+newTeacherEmail+": nhận expat\n"+logCell.getValue());
+      logCell.setValue(timeString+": "+newTeacher+" - "+newTeacherEmail+": nhận expat "+expatName+"\n"+logCell.getValue());
     }else{ //đã có ng 
       if(er.isBlank()){
         newTeacher = "none";
@@ -77,7 +77,7 @@ function checkTeacherColumn(e){
       link: link,
       log: logCell.getValue()
     };
-    console.log("Complete log:\n"+info);
+    console.log("Complete log:\n",info);
       console.log("Change teacher in money sheet");
       handleFeeOnTeacherChanged(info);
   }

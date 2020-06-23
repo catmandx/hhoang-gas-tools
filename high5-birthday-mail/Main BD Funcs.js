@@ -56,6 +56,10 @@ function sendMail(row){
     var cosmetics = {name: ourName, htmlBody: message};
     
     GmailApp.sendEmail(theirEmail, subject, message, cosmetics);
+    
+    var thread = GmailApp.search("in:sent subject" + subject, 0, 1);
+    var label  = GmailApp.getUserLabelByName("AUTOMATED BIRTHDAY MAIL");
+    thread[0].addLabel(label);
   }catch(ex){
     console.log(ex);
   }
