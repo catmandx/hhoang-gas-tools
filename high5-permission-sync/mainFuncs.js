@@ -42,9 +42,9 @@ function checkActiveMembers(e){
 
     let itemOwner = item.getOwner().getEmail().toLowerCase();
     itemNewEditList = itemNewEditList.filter(email => email.toLowerCase() != itemOwner);
-    if(itemPermission === "edit") {
+    if(itemPermission == "edit") {
       itemNewEditList = itemNewEditList.concat(...activeMembersList);
-    }else if(itemPermission === "view") {
+    }else if(itemPermission == "view") {
       itemNewViewList = itemNewViewList.concat(...activeMembersList);
     }
 
@@ -64,7 +64,7 @@ function checkActiveMembers(e){
     
     console.log("\nFor item", itemDescription, ": Start adding EDITORS", editorsToAdd);
     try {
-      if(editorsToAdd.length != 0){
+      if(editorsToAdd.length && editorsToAdd.length != 0){
         item.addEditors(editorsToAdd);
       }
     } catch (error) {
@@ -82,7 +82,7 @@ function checkActiveMembers(e){
     
     console.log("Start adding VIEWERS", viewersToAdd);
     try {
-      if(viewersToAdd.length != 0){
+      if(viewersToAdd.length && viewersToAdd.length != 0){
         item.addViewers(viewersToAdd);
       }
     } catch (error) {
