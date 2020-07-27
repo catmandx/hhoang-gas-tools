@@ -9,6 +9,14 @@ function checkActiveMembers(e){
     return;
   }
 
+  var allowedChangeType = ["EDIT", "INSERT_ROW", "INSERT_COLUMN", "REMOVE_ROW", "REMOVE_COLUMN", "INSERT_GRID", "REMOVE_GRID"];
+  if(e && allowedChangeType.includes(e.changeType)){
+    console.log(e.changeType);
+  }else if(e && !allowedChangeType.includes(e.changeType)){
+    console.log(e.changeType);
+    return;
+  }
+
   //get active members spreadsheet and sheet
   var ss = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/11IcDpPKb-CXlN724c9J5PbickjgoSIQkFJwlgi2-LIA/edit");
   var sheet = ss.getSheetByName("Active Members");

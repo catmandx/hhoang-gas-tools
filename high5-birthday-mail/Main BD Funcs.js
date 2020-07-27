@@ -1,3 +1,5 @@
+var isError = false;
+
 function checkBirthDay() {
   var listMail = [];
   //1. Xác định ngày hôm nay là ngày nào 
@@ -30,6 +32,14 @@ function checkBirthDay() {
       }
     }
   }
+
+  //3. Gui mail neu co loi
+  if(isError){
+    GmailApp.sendEmail("hhoang.nov.13@gmai.com",
+      "Birthday script failure",
+      "An execution failed to finish, please check!"
+    )
+  }
 }
 
 function sendMail(row){
@@ -57,11 +67,13 @@ function sendMail(row){
     
     GmailApp.sendEmail(theirEmail, subject, message, cosmetics);
     
-    var thread = GmailApp.search("in:sent subject" + subject, 0, 1);
+    //is:sent subject:([HIGH5HANOI] HAPPY BIRTHDAY TO YOU!!!) 
+    var thread = GmailApp.search("in:sent subject:(" + subject + ")", 0, 1);
     var label  = GmailApp.getUserLabelByName("AUTOMATED BIRTHDAY MAIL");
     thread[0].addLabel(label);
   }catch(ex){
     console.log(ex);
+    isError = true;
   }
 }
 

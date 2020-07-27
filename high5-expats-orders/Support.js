@@ -78,19 +78,19 @@ function sendTeacherChangedEmail(expatName, oldTeacher, oldTeacherEmail, newTeac
   
   var cosmetics = {name: ourName, htmlBody: message, from: fromMail};
   var recipients = "cm.high5hanoi@gmail.com";
-  if(oldTeacherEmail != 'none'){
+  if(oldTeacherEmail != 'none' && checkEmail(oldTeacherEmail)){
     recipients+= ","+oldTeacherEmail;
 //    GmailApp.sendEmail(oldTeacherEmail, subject, message, cosmetics);
 //    addLabel("Teacher changed", subject, oldTeacherEmail);
   }
-  if(newTeacherEmail != 'none'){
+  if(newTeacherEmail != 'none' && checkEmail(newTeacherEmail)){
     recipients+= ","+newTeacherEmail;
 //    GmailApp.sendEmail(newTeacherEmail, subject, message, cosmetics);
 //    addLabel("Teacher changed", subject, newTeacherEmail);
   }
 //  GmailApp.sendEmail('cmhigh5hanoi@gmail.com', subject, message, cosmetics);
 
-  GmailApp.sendEmail(recipients, subject, message, cosmetics)
+  GmailApp.sendEmail(recipients, subject, message, cosmetics);
   addLabel("Teacher changed", subject, "cm.high5hanoi@gmail.com");
 }
 
@@ -168,6 +168,15 @@ function showAlert(message) {
     return true;
   } else {
     // User clicked "No" or X in the title bar.
+    return false;
+  }
+}
+
+function checkEmail(email) {
+  try{
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email.trim());
+  }catch(ex){
     return false;
   }
 }
