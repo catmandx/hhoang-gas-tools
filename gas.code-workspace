@@ -17,9 +17,12 @@
 		},
 		{
 			"path": "."
+		},
+		{
+			"path": "high5-automail"
 		}
 	],
 	"settings": {
-		"liveServer.settings.multiRootWorkspaceName": null
+		"liveServer.settings.multiRootWorkspaceName": "GAS"
 	}
 }
