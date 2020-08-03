@@ -1,3 +1,15 @@
+
+//////////////////////////////////////////
+/**
+ * List of functions in this file:
+ * setupTriggerArguments(trigger, functionArguments, recurring)
+ * handleTriggered(triggerUid)
+ * getArguments(triggerUid)
+ * deleteTriggerArguments(triggerUid)
+ * deleteTriggerByUid(triggerUid)
+ * deleteTrigger(trigger)
+ */
+//////////////////////////////////////////
 var RECURRING_KEY = "recurring";
 var ARGUMENTS_KEY = "arguments";
 
@@ -33,6 +45,17 @@ function handleTriggered(triggerUid) {
   if (!triggerData[RECURRING_KEY]) {
     deleteTriggerByUid(triggerUid);
   }
+
+  return JSON.parse(triggerData[ARGUMENTS_KEY]);
+}
+
+/**
+ * Function to get stored arguments (retain the trigger and properties)
+ * @param {*} triggerUid 
+ */
+function getArguments(triggerUid){
+  var scriptProperties = PropertiesService.getUserProperties();
+  var triggerData = JSON.parse(scriptProperties.getProperty(triggerUid));
 
   return JSON.parse(triggerData[ARGUMENTS_KEY]);
 }

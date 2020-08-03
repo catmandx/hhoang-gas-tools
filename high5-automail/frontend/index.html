@@ -13,139 +13,145 @@
 </head>
 
 <body>
+  <section class="main-container">
   <!--     
     <div class="header">
         <h1>My Website</h1>
         <p>A website created by me.</p>
     </div> -->
 
-  <div class="topnav sticky" id="myTopnav">
-    <a href="#" class="active">Email Notifications</a>
-    <a href="#">Open & Close Time for forms</a>
-    <a href="#">Limit responses</a>
-    <a href="#" class="right" id="logoutBtn">Logout (<?= getEmail() ?>)</a>
-    <a href="javascript:void(0);" class="icon" id="menuButton">
-      <i class="fa fa-bars"></i>
-    </a>
-  </div>
-
-  <!-- Spacing between topnav and row -->
-  <div class="content"></div>
-
-  <div class="row">
-    <!-- <div class="side">
-            <h2>How to use</h2>
-            <h5>Step 1:</h5>
-            <div class="fakeimg" style="height:200px;">Image</div>
-            <p>Put the form link </p>
-            <h3>More Text</h3>
-            <p>Lorem ipsum dolor sit ame.</p>
-            <div class="fakeimg" style="height:60px;">Image</div><br>
-            <div class="fakeimg" style="height:60px;">Image</div><br>
-            <div class="fakeimg" style="height:60px;">Image</div>
-        </div> -->
-    <div class="main">
-      <div class="container">
-        <form onsubmit="event.preventDefault();return false;">
-          <div class="tblrow">
-            <div class="col-25">
-              <label for="formUrl">Form link</label>
-            </div>
-            <div class="col-75">
-              <input type="text" id="formUrl" name="formUrl" placeholder="Form link...">
-            </div>
-          </div>
-
-          <div class="tblrow">
-            <button type="button" id="btnGetForm" value="Get form">Get form</button>
-          </div>
-
-          <div class="tblrow">
-            <div class="col-25">
-              <label for="recipients">Recipients</label>
-            </div>
-            <div class="col-75">
-              <input type="text" id="recipients" name="recipients" placeholder="List of recipients..">
-            </div>
-          </div>
-
-          <div class="tblrow">
-            <div class="col-25">
-              <label for="alias">Send from (optional)</label>
-            </div>
-            <div class="col-75">
-              <select id="alias">
-                <?!= generateAliasesOptionTags() ?>
-              </select>
-            </div>
-          </div>
-
-          <div class="tblrow">
-            <div class="col-25">
-              <label for="customName">Sender's name (optional)</label>
-            </div>
-            <div class="col-75">
-              <input type="text" id="customName" name="customName" placeholder="Some custom name">
-            </div>
-          </div>
-
-          <div class="tblrow">
-            <div class="col-25">
-              <label for="ccRecipients">CC (optional)</label>
-            </div>
-            <div class="col-75">
-              <input type="text" id="ccRecipients" name="ccRecipients" placeholder="List of CC recipients..">
-            </div>
-          </div>
-
-          <div class="tblrow">
-            <div class="col-25">
-              <label for="bccRecipients">BCC (optional)</label>
-            </div>
-            <div class="col-75">
-              <input type="text" id="bccRecipients" name="bccRecipients" placeholder="List of BCC recipients..">
-            </div>
-          </div>
-
-          <!-- <div class="tblrow">
-                    <div class="col-25">
-                      <label for="email-subject">Subject</label>
-                    </div>
-                    <div class="col-75">
-                      <input type="text" id="email-subject" name="email-subject" placeholder="">
-                    </div>
-                  </div> -->
-
-          <!-- <div class="tblrow">
-                    <div class="col-25">
-                      <label for="email-body">Email body</label>
-                    </div>
-                    <div class="col-75">
-                      <textarea id="email-body" name="email-body" placeholder="Write something.." style="height:200px"></textarea>
-                    </div>
-                  </div> -->
-
-          <div class="tblrow">
-            <div class="col-25">
-              <label for="draftId">
-                Template
-                <i class="fa fa-refresh" id="emailDraftRefresh" aria-hidden="true"></i>
-              </label>
-            </div>
-            <div class="col-75">
-              <select name="draftId" id="draftId">
-                <?!= generateDraftsOptionTags() ?>
-              </select>
-            </div>
-          </div>
-          <div class="tblrow">
-            <button id="btnSubmit" type="button" value="Submit">Submit</button>
-          </div>
-        </form>
-      </div>
-
+    <div class="topnav sticky" id="myTopnav">
+      <a href="#" class="active">Automail</a>
+      <a href="#">Open & Close Timer</a>
+      <a href="#">Limit responses</a>
+      <a href="#">Manage Rules</a>
+      <a href="#" class="right" id="logoutBtn">Logout (<?= getEmail() ?>)</a>
+      <a href="javascript:void(0);" class="icon" id="menuButton">
+        <i class="fa fa-bars"></i>
+      </a>
     </div>
-  </div>
+  
+    <!-- Spacing between topnav and row -->
+    <div class="content"></div>
+  
+    <div class="row">
+      <!-- <div class="side">
+              <h2>How to use</h2>
+              <h5>Step 1:</h5>
+              <div class="fakeimg" style="height:200px;">Image</div>
+              <p>Put the form link </p>
+              <h3>More Text</h3>
+              <p>Lorem ipsum dolor sit ame.</p>
+              <div class="fakeimg" style="height:60px;">Image</div><br>
+              <div class="fakeimg" style="height:60px;">Image</div><br>
+              <div class="fakeimg" style="height:60px;">Image</div>
+          </div> -->
+      <div class="main">
+        <div class="container">
+          <form onsubmit="event.preventDefault();return false;">
+            <div class="tblrow">
+              <div class="col-25">
+                <label for="formUrl">Form</label>
+                <span id="formName"></span>
+              </div>
+              <div class="col-75">
+                <input class="primary" type="text" id="formUrl" name="formUrl" placeholder="Form link...">
+              </div>
+            </div>
+  
+            <div class="tblrow">
+              <button class="primary" type="button" id="btnGetForm" value="Get form">Get form</button>
+              <button type="reset" id="btnReset" value="Reset">Reset</button>
+            </div>
+  
+            <div class="tblrow">
+              <div class="col-25">
+                <label for="recipients">Recipients</label>
+              </div>
+              <div class="col-75">
+                <input class="secondary" type="text" id="recipients" name="recipients" placeholder="List of recipients..">
+              </div>
+            </div>
+  
+            <div class="tblrow">
+              <div class="col-25">
+                <label for="alias">Send from (optional)</label>
+              </div>
+              <div class="col-75">
+                <select class="secondary" id="alias">
+                  <?!= generateAliasesOptionTags() ?>
+                </select>
+              </div>
+            </div>
+  
+            <div class="tblrow">
+              <div class="col-25">
+                <label for="customName">Sender's name (optional)</label>
+              </div>
+              <div class="col-75">
+                <input class="secondary" type="text" id="customName" name="customName" placeholder="Some custom name">
+              </div>
+            </div>
+  
+            <div class="tblrow">
+              <div class="col-25">
+                <label for="ccRecipients">CC (optional)</label>
+              </div>
+              <div class="col-75">
+                <input class="secondary" type="text" id="ccRecipients" name="ccRecipients" placeholder="List of CC recipients..">
+              </div>
+            </div>
+  
+            <div class="tblrow">
+              <div class="col-25">
+                <label for="bccRecipients">BCC (optional)</label>
+              </div>
+              <div class="col-75">
+                <input class="secondary" type="text" id="bccRecipients" name="bccRecipients" placeholder="List of BCC recipients..">
+              </div>
+            </div>
+  
+            <!-- <div class="tblrow">
+                      <div class="col-25">
+                        <label for="email-subject">Subject</label>
+                      </div>
+                      <div class="col-75">
+                        <input type="text" id="email-subject" name="email-subject" placeholder="">
+                      </div>
+                    </div> -->
+  
+            <!-- <div class="tblrow">
+                      <div class="col-25">
+                        <label for="email-body">Email body</label>
+                      </div>
+                      <div class="col-75">
+                        <textarea id="email-body" name="email-body" placeholder="Write something.." style="height:200px"></textarea>
+                      </div>
+                    </div> -->
+  
+            <div class="tblrow">
+              <div class="col-25">
+                <label for="draftId">
+                  Template
+                  <i class="fa fa-refresh" id="emailDraftRefresh" aria-hidden="true"></i>
+                </label>
+              </div>
+              <div class="col-75">
+                <select class="secondary" name="draftId" id="draftId">
+                  <?!= generateDraftsOptionTags() ?>
+                </select>
+              </div>
+            </div>
+            <div class="tblrow">
+              <button class="secondary" id="btnSubmit" type="button" value="Submit">Submit</button>
+            </div>
+          </form>
+        </div>
+  
+      </div>
+    </div>
+  </section>
+
 
   <div class="footer">
     <h2>Footer</h2>

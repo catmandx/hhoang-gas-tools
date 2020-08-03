@@ -4,6 +4,7 @@
     Automail.currentForm = {};
     Automail.currentForm.fetched = false;
     Automail.currentForm.formUrl = "";
+    Automail.currentForm.formName = "";
     Automail.currentForm.hasTrigger = false;
     Automail.currentForm.trigger = {};
     Automail.currentForm.trigger.triggerId = "";
@@ -21,7 +22,7 @@
         if (formUrl.length == 0 && formUrl.indexOf("edit") < 0) {
             return;
         } else {
-            google.script.run.withSuccessHandler(receiveForm).openByUrl(formId);
+            google.script.run.withSuccessHandler(receiveForm).openByUrl(formUrl);
         }
     }
 
@@ -30,6 +31,7 @@
         Object.assign(Automail.currentForm, formObj);
         Automail.currentForm.fetched = true;
         if(Automail.currentForm.hasTrigger){
+            $("#formName").text(Automail.currentForm.formName);
             $("#recipients").val(Automail.currentForm.trigger.recipients);
             $("#alias").val(Automail.currentForm.trigger.alias);
             $("#customName").val(Automail.currentForm.trigger.customName);
@@ -37,19 +39,28 @@
             $("#bccRecipients").val(Automail.currentForm.trigger.bccRecipients);
             $("#draftId").val(Automail.currentForm.trigger.draftId);
         }
+        $(".primary").prop("disabled", true);
+        $(".secondary").prop("disabled", false);
     }
 </script>
 
-<!-- setFormAutoMail -->
+<!-- setFormAutomail -->
 <script>
-    function setFormAutoMail() {
-        var params = {}; //same type as currentForm
+    function setFormAutomail() {
+        if(!Automail.currentForm.fetched){
+            console.log("Not fetched!!");
+            return;
+        }
+
+        //todo check if currentForm.formUrl and #formUrl's ids matche
+        var params = Automail.currentForm; //same type as currentForm
         params.trigger = {};
         params.mode = "create";
         
         if (Automail.currentForm.hasTrigger){
             params.mode = "update";
         }
+
         params.formUrl = $("#formUrl").val();
         params.trigger.recipients = $("#recipients").val();
         params.trigger.alias = $("#alias").val();
@@ -58,7 +69,20 @@
         params.trigger.bccRecipients = $("#bccRecipients").val();
         params.trigger.draftId = $("#draftId").val();
 
+        console.log(params);
+        google.script.run
+            .withSuccessHandler(setFormAutomailSuccess)
+            .withFailureHandler(setFormAutomailFailure)
+            .setFormAutomail(params);
         //todo
+    }
+
+    function setFormAutomailSuccess(event){
+        console.log(event);
+    }
+
+    function setFormAutomailFailure(event){
+        console.log(event);
     }
 </script>
 
@@ -90,7 +114,14 @@
             }
         });
 
-        $("#btnGetForm").click(requestForm());
-        $("#btnSubmit").click(setFormAutomail());
+        $("#btnGetForm").click(requestForm);
+        $("#btnSubmit").click(setFormAutomail);
+        $(".secondary").prop('disabled', true);
+        $("#btnReset").click(() => {
+            $("#formName").text("");
+            $('.primary').prop("disabled", false);
+            $(".secondary").prop('disabled', true);
+            Automail.currentForm.fetched = false;
+        });
     })
 </script>
