@@ -1,0 +1,44 @@
+<a id="reloadLink" style="display:none" 
+   href="https://script.google.com/macros/s/AKfycbwseDHLWa_IXdkhsQEaaKYC4BKHHc7LosnIoajtvYsd8hvvZLc/exec">Reload the Web App</a>
+
+<script>
+
+    function reload(){
+        setTimeout(() => $("#reloadLink")[0].click(), 3000);
+    }
+
+    $("#logoutBtn").click(() => {
+        var logout = window.confirm("Are you sure, this will delete automail for every Form!");
+        if(logout){
+            google.script.run.withSuccessHandler(reload).logout();
+        }
+    });
+
+    $("#menuButton").click(function () {
+        var x = $("#myTopnav");
+        if (x.hasClass("responsive")) {
+            x.removeClass("responsive");
+        } else {
+            x.addClass("responsive");
+            window.scrollTo(0,0);
+        }
+    });
+
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": true,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+</script>

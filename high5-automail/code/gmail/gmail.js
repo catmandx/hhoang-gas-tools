@@ -35,7 +35,7 @@ function generateDraftsOptionTags() {
     });
 
     if (optionTags.length == 0) {
-        optionTags = "<option>No draft available!</option>";
+        optionTags = "<option value='NA'>No draft available!</option>";
     }
 
     return optionTags;
@@ -76,11 +76,11 @@ function getDraftsInfo() {
  */
 function generateAliasesOptionTags() {
     var defaultAlias =
-        `<option value='null'>Not selected</option>
+        `<option value=''>Not selected</option>
         <option disabled='disabled'>-----</option>`;
     var aliases = GmailApp.getAliases();
     if (aliases.length == 0) {
-        return "<option value='null'>No alias</option>";
+        return "<option value=''>No alias</option>";
     }
 
     return defaultAlias + aliases.map(alias => {
@@ -93,10 +93,7 @@ function generateAliasesOptionTags() {
  * @param {String} draftId "r-xxxxxxxxxxxx"
  * @returns {String} draftBody 
  */
-// function getDraftContentById(draftId){
-//     return GmailApp.getDraft(draftId).getMessage().getPlainBody();
-// }
-
 function getDraftContentById(draftId) {
     return GmailApp.getDraft(draftId).getMessage().getPlainBody();
 }
+

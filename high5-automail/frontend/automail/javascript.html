@@ -1,0 +1,192 @@
+<script>
+    // Global vars 
+    var Automail = {};
+    function initAutomailObj(){
+        Automail.currentForm = {};
+        Automail.currentForm.fetched = false;
+        Automail.currentForm.feature = "automailer";
+        Automail.currentForm.formUrl = "";
+        Automail.currentForm.formName = "";
+        Automail.currentForm.hasTrigger = false;
+        Automail.currentForm.trigger = {};
+        Automail.currentForm.trigger.triggerUid = "";
+        Automail.currentForm.trigger.destinationId = "";
+        Automail.currentForm.trigger.recipients = "";
+        Automail.currentForm.trigger.alias = "";
+        Automail.currentForm.trigger.customName = "";
+        Automail.currentForm.trigger.ccRecipients = "";
+        Automail.currentForm.trigger.bccRecipients = "";
+        Automail.currentForm.trigger.draftId = "";
+    }
+</script>
+
+<!-- #btnGetForm request form  -->
+<script>
+    function requestForm() {
+        let formUrl = $("#formUrl").val().trim();
+        if (formUrl.length == 0 && formUrl.indexOf("edit") < 0) {
+            toastr.warning("Please enter a valid Form url (edit url)!")
+            return;
+        } else {
+            google.script.run
+                .withSuccessHandler(receiveForm)
+                .withFailureHandler(errorOpening)
+                .openByUrl(formUrl);
+        }
+    }
+
+    function receiveForm(formObj) {
+        console.log(formObj);
+        Object.assign(Automail.currentForm, formObj);
+        Object.assign(Automail.currentForm.trigger, formObj.trigger);
+        Automail.currentForm.fetched = true;
+        $("#formName").text(Automail.currentForm.formName);
+        if(Automail.currentForm.hasTrigger){
+            $("#recipients").val(Automail.currentForm.trigger.recipients);
+            $("#alias").val(Automail.currentForm.trigger.alias);
+            $("#customName").val(Automail.currentForm.trigger.customName);
+            $("#ccRecipients").val(Automail.currentForm.trigger.ccRecipients);
+            $("#bccRecipients").val(Automail.currentForm.trigger.bccRecipients);
+            $("#draftId").val(Automail.currentForm.trigger.draftId);
+        }
+        $(".primary").prop("disabled", true);
+        $(".secondary").prop("disabled", false);
+        if(!Automail.currentForm.hasTrigger){
+            $("#btnDeleteTrigger").prop("disabled", true);
+        }
+    }
+
+    function errorOpening(event){
+        toastr.error(event);
+        console.log(event);
+    }
+
+    function resetForm() {
+            $("#formName").text("");
+            $('.primary').prop("disabled", false);
+            $(".secondary").prop('disabled', true);
+            initAutomailObj();
+        }
+</script>
+
+<!-- #btnSubmit setFormAutomail -->
+<script>
+    function setFormAutomail() {
+        if(!Automail.currentForm.fetched){
+            console.log("Not fetched!!");
+            toastr.warning("Get the form first!");
+            return;
+        }
+
+        //todo check if currentForm.formUrl and #formUrl's ids matche
+        var params = {}; //same type as currentForm
+        params.trigger = {};
+
+        Object.assign(params, Automail.currentForm);
+        Object.assign(params.trigger, Automail.currentForm.trigger);
+
+        params.formUrl = $("#formUrl").val();
+        params.trigger.recipients = $("#recipients").val().trim();
+        params.trigger.alias = $("#alias").val().trim();
+        params.trigger.customName = $("#customName").val().trim();
+        params.trigger.ccRecipients = $("#ccRecipients").val().trim();
+        params.trigger.bccRecipients = $("#bccRecipients").val().trim();
+        params.trigger.draftId = $("#draftId").val().trim();
+
+        function getIdFromUrl(url) { return url.match(/[-\w]{25,}/); }
+
+        if(params.trigger.recipients.length == 0){
+            toastr.warning("Recipients field missing!");
+            return false;
+        }
+
+        if(params.trigger.draftId == "NA"){
+            toastr.warning("No drafts selected!");
+            return false;
+        }
+        console.log("Prepare to send");
+        console.log("Params",params);
+        console.log("Automail",Automail.currentForm);
+
+        google.script.run
+            .withSuccessHandler(setFormAutomailSuccess)
+            .withFailureHandler(setFormAutomailFailure)
+            .setFormAutomail(params);
+        //todo
+    }
+
+    function setFormAutomailSuccess(event){
+        if(event.hasTrigger){ 
+            toastr.success("Setup successful!");
+            Object.assign(Automail.currentForm, event);
+            Object.assign(Automail.currentForm.trigger, event.trigger);
+            console.log("Automail", Automail.currentForm);
+            $("#btnDeleteTrigger").prop("disabled", false);
+        }else{
+            toastr.error(event);
+        }
+        console.log("Params",event);
+    }
+
+    function setFormAutomailFailure(event){
+        toastr.error(event);
+        console.error(event);
+    }
+
+    //$("#btnDeleteTrigger")
+    function removeAutomail(){
+        //check 
+        if(!Automail.currentForm.hasTrigger || !Automail.currentForm.trigger.triggerUid){
+            return;
+        }
+        var accept = window.confirm("Do you want to remove automail for this form?");
+        if(!accept){
+            return;
+        }
+        //delete automail
+        google.script.run
+            .withFailureHandler(removeAutomailFailure)
+            .withSuccessHandler(removeAutomailSuccess)
+            .removeAutomail(Automail.currentForm);
+    }
+
+    function removeAutomailFailure(error){
+        toastr.error(error);
+        console.log(error);
+    }
+
+    function removeAutomailSuccess(event){
+        toastr.success("Automail removed!");
+        $("#btnReset")[0].click();
+        console.log("Automail removed");
+    }
+</script>
+
+<!-- document.ready  -->
+<script>
+    $(function () {
+        //get draft buttons
+        $('#emailDraftRefresh').hover(
+            function () { $(this).addClass('fa-spin') },
+            function () { $(this).removeClass('fa-spin') }
+        ).click(e => {
+            google.script.run
+                .withSuccessHandler(tags => {
+                    $("#draftId")
+                        .html(tags)
+                        .fadeOut(100)
+                        .fadeIn(100);
+                    $("#emailDraftRefresh").removeClass("fa-spin");
+                })
+                .generateDraftsOptionTags();
+        });
+
+        $("#btnGetForm").click(requestForm);
+        $("#btnSubmit").click(setFormAutomail);
+        //disable when starting up the page
+        $(".secondary").prop('disabled', true);
+        $("#btnReset").click(resetForm);
+        $("#btnDeleteTrigger").click(removeAutomail);
+        initAutomailObj();
+    })
+</script>

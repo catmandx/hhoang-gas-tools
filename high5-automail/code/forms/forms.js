@@ -13,52 +13,46 @@
  * @param {*} params 
  */
 function setFormAutomail(params){
-    if(params.mode == "create"){
+    //todo delete rule logic
+    try {
+        var url = params.formUrl;
+        var form = FormApp.openByUrl(url);
+        var ss;
+
         try {
-            var url = params.formUrl;
-            var form = FormApp.openByUrl(url);
-            var ss;
-
-            try {
-                ss = SpreadsheetApp.openById(form.getDestinationId());
-            } catch (error) {
-                ss = SpreadsheetApp.create(form.getTitle + " (Responses)");
-                form.setDestination(FormApp.DestinationType.SPREADSHEET, ss.getId());
-            }
-
-            params.trigger.destinationId = ss.getId();
-
-            var trigger = ScriptApp.newTrigger("sendAutomail")
-                .forSpreadsheet(ss)
-                .onFormSubmit()
-                .create();
-
-            setupTriggerArguments(trigger, params, true);
-
-            return params;
+            ss = SpreadsheetApp.openById(form.getDestinationId());
         } catch (error) {
-            return error;
+            ss = SpreadsheetApp.create(form.getTitle() + " (Responses)");
+            form.setDestination(FormApp.DestinationType.SPREADSHEET, ss.getId());
         }
+
+        params.trigger.destinationId = ss.getId();
         
-    }else if(params.mode == "update"){
-        //todo
+        if(!params.hasTrigger){
+            var trigger = ScriptApp.newTrigger("sendAutomail")
+            .forSpreadsheet(ss)
+            .onFormSubmit()
+            .create();
+
+            params.trigger.triggerUid = trigger.getUniqueId();
+            params.hasTrigger = true;
+            setupTriggerArguments(trigger, params, true);
+        }else{
+            setupTriggerArgumentsWithUid(params.trigger.triggerUid, params, true);
+        }
+
+        return params;
+    } catch (error) {
+        return error.message;
     }
 }
 
-/**
- * The function sends the email everytime there is
- * a form submit.
- * 
- * Gets data from a sheet, replace the markers ({{marker}})
- * then send the email, updating the status in the sheet
- * @param {*} trigger : GSheet onFormSubmit event object
- */
-function sendAutomail(trigger){
-    //todo
-    var params = handleTriggered(trigger.triggerUid);
-    // var form = trigger.source;
-    // var resp = trigger.response;
+function removeAutomail(params){
+    if(!params.hasTrigger || !params.trigger.triggerUid){
+        return;
+    }
     
+    deleteTriggerByUid(params.trigger.triggerUid);
 }
 
 /**
@@ -74,4 +68,51 @@ function setAcceptingResponses(trigger){
     form.setAcceptingResponses(accepting);
 
     deleteTrigger(trigger);
+}
+
+/**
+ * Request a form.
+ * looks up if theres a trigger already set up for
+ * this form
+ * @param {String} url : a valid gform url (with /edit)
+ */
+function openByUrl(url){
+    var res = {};
+    var form = FormApp.openByUrl(url);
+    var formId = form.getId();
+    var destinationId = "";
+    try {
+        destinationId = form.getDestinationId();
+    } catch (error) {
+        console.log(error);
+    }
+
+    var params = {}
+
+    //find triggers associated with this form
+    var triggers = ScriptApp.getProjectTriggers();
+    for (const trigger of triggers) {
+        let sourceId = trigger.getTriggerSourceId();
+        if(sourceId == destinationId){
+            params = getArguments(trigger.getUniqueId());
+            params.hasTrigger = true;
+            break;
+        }
+    }
+
+    params.formName = form.getTitle();
+    return params;
+}
+
+/**
+ * Set open or close time
+ * @param {GoogleAppsScript.Forms.Form} form 
+ * @param {Date} time : the specified time
+ * @param {Boolean} accepting : true (open) or false (close)
+ */
+function setOpenOrCloseTime(form, time, accepting){
+    time = new Date();
+
+    var trigger = ScriptApp.newTrigger("setAcceptingResponses").timeBased().at(time).create();
+    setupTriggerArguments(trigger, {id:form.getId(), accepting: accepting}, false);
 }

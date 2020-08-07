@@ -32,6 +32,22 @@ function setupTriggerArguments(trigger, functionArguments, recurring) {
 }
 
 /**
+ * New function
+ * @param {} triggerUid 
+ * @param {*} functionArguments 
+ * @param {*} recurring 
+ * @param {*} placeholder 
+ */
+function setupTriggerArgumentsWithUid(triggerUid, functionArguments, recurring) {
+  var triggerData = {};
+  triggerData[RECURRING_KEY] = recurring;
+//  triggerData[ARGUMENTS_KEY] = functionArguments;
+  triggerData[ARGUMENTS_KEY] = JSON.stringify(functionArguments);
+
+  PropertiesService.getUserProperties().setProperty(triggerUid, JSON.stringify(triggerData));
+}
+
+/**
  * Function which should be called when a trigger runs a function. Returns the stored arguments 
  * and deletes the properties entry and trigger if it is not recurring.
  *

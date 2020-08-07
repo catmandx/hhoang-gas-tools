@@ -12,18 +12,56 @@
 /**
  * returns HTMLOutputs
  */
-function doGet() {
-    return HtmlService.createTemplateFromFile('frontend/index')
-    .evaluate()
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+function doGet(e) {
+    var view = "index";
+    if(e.queryString){
+        view = e.parameter.view;
+    }
+    var output;
+    //todo
+    switch(view){
+        case "timer":
+            output = HtmlService.createTemplateFromFile('frontend/timer/timer')
+            .evaluate()
+            .setTitle("Form Timer - High5");
+            break;
+        case "limiter":
+            output = HtmlService.createTemplateFromFile('frontend/limiter/limiter')
+            .evaluate()
+            .setTitle("Form Limiter - High5 ");
+            break;
+        default:
+            //index
+            output = HtmlService.createTemplateFromFile('frontend/automail/index')
+            .evaluate()
+            .setTitle("Automailer - High5 ");
+            break;
+    }
+    
+    return output
+    // .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
     .addMetaTag('viewport', 'width=device-width, initial-scale=1')
     .addMetaTag('mobile-web-app-capable', 'yes')
-    .setFaviconUrl('https://high5hanoi.edu.vn/wp-content/uploads/2020/08/Logo-High53-Custom.png')
-    .setTitle("High5 Automail");
-
-    //todo routers to add more pages
+    .setFaviconUrl('https://high5hanoi.edu.vn/wp-content/uploads/2020/08/Logo-High53-Custom.png');
 }
 
+function logout(){
+    var triggers = ScriptApp.getProjectTriggers();
+    for(const trigger of triggers){
+        try {
+            deleteTrigger(trigger);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    ScriptApp.invalidateAuth();
+    
+    var url = "https://accounts.google.com/o/oauth2/revoke?token=" + ScriptApp.getOAuthToken();
+    var res = UrlFetchApp.fetch(url);
+    Logger.log(res.getResponseCode());
+    return res.getResponseCode();
+}
 /**
  * used to include javascript.html and css.html
  * into index.html
@@ -41,49 +79,15 @@ function getEmail() {
     return Session.getActiveUser().getEmail();
 }
 
-/**
- * Request a form.
- * looks up if theres a trigger already set up for
- * this form
- * @param {String} url : a valid gform url (with /edit)
- */
-function openByUrl(url){
-    var res = {};
-    var form = FormApp.openByUrl(url);
-    var formId = form.getId();
-    var destinationId = "";
-    try {
-        destinationId = form.getDestinationId();
-    } catch (error) {
-        console.log(error);
-    }
 
-    var params = {}
-
-    //find triggers associated with this form
-    var triggers = ScriptApp.getProjectTriggers();
-    for (const trigger of triggers) {
-        let sourceId = trigger.getTriggerSourceId();
-        if(sourceId == destinationId){
-            params = getArguments(trigger.getUniqueId());
-            params.hasTrigger = true;
-            break;
-        }
-    }
-
-    params.formName = form.getTitle();
-    return params;
+function deleteAllProperties(){
+    var properties = PropertiesService.getUserProperties();
+    getAllProperties();
+    properties.deleteAllProperties();
 }
 
-/**
- * Set open or close time
- * @param {GoogleAppsScript.Forms.Form} form 
- * @param {Date} time : the specified time
- * @param {Boolean} accepting : true (open) or false (close)
- */
-function setOpenOrCloseTime(form, time, accepting){
-    time = new Date();
-
-    var trigger = ScriptApp.newTrigger("setAcceptingResponses").timeBased().at(time).create();
-    setupTriggerArguments(trigger, {id:form.getId(), accepting: accepting}, false);
+function getAllProperties(){
+    var properties = PropertiesService.getUserProperties();
+    var all = properties.getProperties()
+    console.log(all);
 }
