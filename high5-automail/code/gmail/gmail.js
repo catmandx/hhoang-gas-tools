@@ -4,7 +4,7 @@
  * generateOptionTags()
  * getDraftsInfo()
  * generateAliasesOptionTags()
- * getDraftContentById(draftId)
+ * getDraftBodyById(draftId)
  */
 //////////////////////////////////////////
 
@@ -30,7 +30,7 @@ function generateDraftsOptionTags() {
             `\n<option value="${draft.id}">
                 ${draft.isStarred ? "★" : ""} 
                 ${draft.subject} 
-                - ${draft.size}
+                ${draft.size?"- "+draft.size:""}
             </option>`
     });
 
@@ -55,16 +55,28 @@ function generateDraftsOptionTags() {
  * }
  */
 function getDraftsInfo() {
-    return GmailApp.getDrafts().map(draft => {
-        return {
-            id: draft.getId(),
-            subject: draft.getMessage().getSubject(),
-            isStarred: draft.getMessage().isStarred(),
-            size: (~~(Utilities
-                .newBlob(draft.getMessage().getRawContent())
-                .getBytes().length / 1024)) + "KB"
-        };
-    })
+    var drafts = GmailApp.getDrafts();
+    if(drafts.length < 20){
+        return GmailApp.getDrafts().map(draft => {
+            return {
+                id: draft.getId(),
+                subject: draft.getMessage().getSubject(),
+                isStarred: draft.getMessage().isStarred(),
+                size: (~~(Utilities
+                    .newBlob(draft.getMessage().getRawContent())
+                    .getBytes().length / 1024)) + "KB"
+            };
+        });
+    }else{
+        return GmailApp.getDrafts().map(draft => {
+            return {
+                id: draft.getId(),
+                subject: draft.getMessage().getSubject(),
+                isStarred: draft.getMessage().isStarred()
+            };
+        });
+    }
+    
 }
 
 /**
@@ -93,7 +105,30 @@ function generateAliasesOptionTags() {
  * @param {String} draftId "r-xxxxxxxxxxxx"
  * @returns {String} draftBody 
  */
-function getDraftContentById(draftId) {
+function getDraftBodyById(draftId) {
+    return GmailApp.getDraft(draftId).getMessage().getBody();
+}
+
+function getDraftPlainBodyById(draftId){
     return GmailApp.getDraft(draftId).getMessage().getPlainBody();
+}
+
+function isHtmlEmail(draftId, body, plainBody){
+    if(!draftId && !body && !plainBody){
+        return;
+    }
+
+    if(!body){
+        body = getDraftBodyById(draftId);
+    }
+
+    if(!plainBody){
+        plainBody = getDraftPlainBodyById(draftId);
+    }
+
+    body = body.replace(/\s/g,'');
+    plainBody = plainBody.replace(/\s/g, '');
+
+    return plainBody != body;
 }
 

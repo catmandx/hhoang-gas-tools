@@ -16,7 +16,7 @@ function sendHTML(){
     r.To = 'Some User <' + someUser + '>';
     r.Subject = 'New Email!';
     // r.body = '<html><body>' + 'You have a new email!' + '</body></html>';
-    r.body = getDraftContentById("r-5318680169226253490");
+    r.body = getDraftBodyById("r-5318680169226253490");
     var draftBody = r.encode();
     
     var params =

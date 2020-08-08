@@ -18,7 +18,7 @@ function doGet(e) {
         view = e.parameter.view;
     }
     var output;
-    //todo
+
     switch(view){
         case "timer":
             output = HtmlService.createTemplateFromFile('frontend/timer/timer')
@@ -28,18 +28,18 @@ function doGet(e) {
         case "limiter":
             output = HtmlService.createTemplateFromFile('frontend/limiter/limiter')
             .evaluate()
-            .setTitle("Form Limiter - High5 ");
+            .setTitle("Form Limiter - High5");
             break;
         default:
             //index
             output = HtmlService.createTemplateFromFile('frontend/automail/index')
             .evaluate()
-            .setTitle("Automailer - High5 ");
+            .setTitle("Automail - High5");
             break;
     }
     
     return output
-    // .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
     .addMetaTag('viewport', 'width=device-width, initial-scale=1')
     .addMetaTag('mobile-web-app-capable', 'yes')
     .setFaviconUrl('https://high5hanoi.edu.vn/wp-content/uploads/2020/08/Logo-High53-Custom.png');

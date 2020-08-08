@@ -4,7 +4,7 @@
     function initAutomailObj(){
         Automail.currentForm = {};
         Automail.currentForm.fetched = false;
-        Automail.currentForm.feature = "automailer";
+        Automail.currentForm.feature = "automail";
         Automail.currentForm.formUrl = "";
         Automail.currentForm.formName = "";
         Automail.currentForm.hasTrigger = false;
@@ -62,11 +62,11 @@
     }
 
     function resetForm() {
-            $("#formName").text("");
-            $('.primary').prop("disabled", false);
-            $(".secondary").prop('disabled', true);
-            initAutomailObj();
-        }
+        $("#formName").text("");
+        $('.primary').prop("disabled", false);
+        $(".secondary").prop('disabled', true);
+        initAutomailObj();
+    }
 </script>
 
 <!-- #btnSubmit setFormAutomail -->
@@ -78,7 +78,6 @@
             return;
         }
 
-        //todo check if currentForm.formUrl and #formUrl's ids matche
         var params = {}; //same type as currentForm
         params.trigger = {};
 
@@ -100,10 +99,16 @@
             return false;
         }
 
+        if(params.trigger.customName.length == 0){
+            toastr.warning("Sender's name field missing!");
+            return false;
+        }
+
         if(params.trigger.draftId == "NA"){
             toastr.warning("No drafts selected!");
             return false;
         }
+        
         console.log("Prepare to send");
         console.log("Params",params);
         console.log("Automail",Automail.currentForm);
@@ -112,12 +117,13 @@
             .withSuccessHandler(setFormAutomailSuccess)
             .withFailureHandler(setFormAutomailFailure)
             .setFormAutomail(params);
-        //todo
+        //todo gì đây chẳng nhớ nữa
+        $(".secondary").prop('disabled', true);
     }
 
     function setFormAutomailSuccess(event){
         if(event.hasTrigger){ 
-            toastr.success("Setup successful!");
+            toastr.success("Setup automail successfully!");
             Object.assign(Automail.currentForm, event);
             Object.assign(Automail.currentForm.trigger, event.trigger);
             console.log("Automail", Automail.currentForm);
@@ -126,11 +132,13 @@
             toastr.error(event);
         }
         console.log("Params",event);
+        $(".secondary").prop('disabled', false);
     }
 
     function setFormAutomailFailure(event){
         toastr.error(event);
         console.error(event);
+        $(".secondary").prop('disabled', true);
     }
 
     //$("#btnDeleteTrigger")
@@ -166,10 +174,8 @@
 <script>
     $(function () {
         //get draft buttons
-        $('#emailDraftRefresh').hover(
-            function () { $(this).addClass('fa-spin') },
-            function () { $(this).removeClass('fa-spin') }
-        ).click(e => {
+        $('#emailDraftRefresh').click(e => {
+            $("#emailDraftRefresh").addClass('fa-spin');
             google.script.run
                 .withSuccessHandler(tags => {
                     $("#draftId")

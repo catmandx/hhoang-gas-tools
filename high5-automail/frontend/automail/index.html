@@ -40,14 +40,15 @@
             <div class="tblrow">
               <div class="col-25">
                 <label for="formUrl">
-                  Form
+                  Form 
+                  <span id="formName"></span>
+                  <span class="red"> *</span>
                 </label>
                 <i class="fa fa-question-circle tooltip" aria-hidden="true">
                   <span class="tooltiptext">
                     Enter the link to the form here, format: ...forms/d/XXXXXXXXXXXXX/edit
                   </span>
                 </i>
-                <span id="formName"></span>
               </div>
               <div class="col-75">
                 <input class="primary" type="text" id="formUrl" name="formUrl" placeholder="Form link...">
@@ -61,7 +62,7 @@
   
             <div class="tblrow">
               <div class="col-25">
-                <label for="recipients">Recipients</label>
+                <label for="recipients">Recipients <span class="red">*</span></label>
               </div>
               <div class="col-75">
                 <input class="secondary" type="text" id="recipients" name="recipients" placeholder="List of recipients..">
@@ -81,7 +82,7 @@
   
             <div class="tblrow">
               <div class="col-25">
-                <label for="customName">Sender's name (optional)</label>
+                <label for="customName">Sender's name <span class="red">*</span></label>
               </div>
               <div class="col-75">
                 <input class="secondary" type="text" id="customName" name="customName" placeholder="Some custom name">
@@ -110,6 +111,7 @@
               <div class="col-25">
                 <label for="draftId">
                   Template
+                  <span class="red"> *</span>
                   <i class="fa fa-refresh" id="emailDraftRefresh" aria-hidden="true"></i>
                 </label>
               </div>

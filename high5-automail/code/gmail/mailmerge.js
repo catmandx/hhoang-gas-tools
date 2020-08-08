@@ -138,7 +138,7 @@ function sendEmails() {
     var emailTemplate = templateSheet.getRange('A1').getValue();
 
     // Create one JavaScript object per row of data.
-    var objects = getRowsData(dataSheet, dataRange);
+    var objects = getRowsData(dataSheet, dataRange, 1);
 
     // For every row object, create a personalized email from a template and send
     // it to the appropriate person.
@@ -196,18 +196,47 @@ function sendAutomail(trigger){
         var params = handleTriggered(trigger.triggerUid);
         console.log(params);
         //get an object with answers
-        var namedValues = trigger.namedValues;
+        // var namedValues = trigger.namedValues;
         let range = trigger.range; //class Range
+        let sheet = range.getSheet();
+        range = sheet.getRange(
+            range.getRowIndex(),
+            range.getColumn(),
+            1, //1 row
+            sheet.getLastColumn());
 
-        //normalize key name: FirstName to firstName
-        for(const key in namedValues){
-            namedValues[normalizeHeader(key)] = namedValues[key];
-            delete namedValues[key];
+        var objects = getRowsData(sheet, range, 1);
+        console.log("rows data",objects);
+
+        if(objects.length < 1){
+            console.log("No rows selected!");
+            return;
         }
 
-        var template = getDraftContentById(params.trigger.draftId);
+        var namedValues = objects[0];
 
-        var emailContent = fillInTemplateFromObject(template, namedValues);
+        //normalize key name: FirstName to firstName
+        // for(const key in namedValues){
+        //     var newKey = normalizeHeader(key);
+        //     if(newKey != key){
+        //         namedValues[newKey] = namedValues[key];
+        //         delete namedValues[key];
+        //     }
+        // }
+
+        var template = getDraftBodyById(params.trigger.draftId);
+        var templatePlain = getDraftPlainBodyById(params.trigger.draftId);
+        var isTemplateHtml = isHtmlEmail(params.trigger.draftId, template, templatePlain);
+
+        var emailContent;
+        var htmlBody;
+
+        if(isTemplateHtml){
+            emailContent = fillInTemplateFromObject(templatePlain, namedValues);
+            htmlBody = fillInTemplateFromObject(template, namedValues)
+        }else{
+            emailContent = fillInTemplateFromObject(templatePlain, namedValues);
+        }
 
         var recipient = fillInTemplateFromObject(params.trigger.recipients, namedValues);
 
@@ -231,7 +260,9 @@ function sendAutomail(trigger){
             options.from = fillInTemplateFromObject(params.trigger.alias, namedValues);
         }
 
-        options.htmlBody = emailContent;
+        if(isTemplateHtml){
+            options.htmlBody = htmlBody;
+        }
 
         if(params.trigger.customName){
             options.name = fillInTemplateFromObject(params.trigger.customName, namedValues);
@@ -250,8 +281,6 @@ function sendAutomail(trigger){
         var range1 = sheet.getRange(range.getRow(), range.getNumColumns()+1);
         range1.setValue(error);
         console.log(error);
-
-        
     }
     //todo logging and reporting
     var sheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1sIeFppDrIw5MK6fxf0Nn6MyiPJB4hTNX944W3zcdN_U/edit#gid=0")

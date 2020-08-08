@@ -1,0 +1,145 @@
+<script>
+    // Global vars 
+
+    Timer = {};
+
+    function initTimerObj(){
+        Timer.currentForm = {};
+        Timer.currentForm.fetched = false;
+        Timer.currentForm.feature = "timer";
+        Timer.currentForm.formUrl = "";
+        Timer.currentForm.formName = "";
+        Timer.currentForm.hasTrigger = false;
+        Timer.currentForm.trigger = {};
+        Timer.currentForm.trigger.triggerUid = "";
+        // Timer.currentForm.trigger.openingTime = "";
+        // Timer.currentForm.trigger.closingTime = "";
+    }
+    
+    function resetForm() {
+        $("#formName").text("");
+        $('.primary').prop("disabled", false);
+        $(".secondary").prop('disabled', true);
+        initTimerObj();
+    }
+
+</script>
+
+<script>
+    function requestForm() {
+        let formUrl = $("#formUrl").val().trim();
+        if (formUrl.length == 0 && formUrl.indexOf("edit") < 0) {
+            toastr.warning("Please enter a valid Form url (edit url)!")
+            return;
+        } else {
+            google.script.run
+                .withSuccessHandler(receiveForm)
+                .withFailureHandler(errorOpening)
+                .openByUrl(formUrl, "timer");
+        }
+    }
+
+    function receiveForm(form){
+        Object.assign(Timer.currentForm, form);
+        Object.assign(Timer.currentForm.trigger, form.trigger);
+        Timer.currentForm.fetched = true;
+        $("#formName").text(Timer.currentForm.formName);
+        if(Timer.currentForm.hasTrigger){
+            //check if opening time and closing time has values
+            $("#openingTime").val(form.trigger.openingTime);
+            $("#closingTime").val(form.trigger.closingTime);
+        }
+        $(".primary").prop("disabled", true);
+        $(".secondary").prop("disabled", false);
+        if(!Timer.currentForm.hasTrigger){
+            $("#btnDeleteTrigger").prop("disabled", true);
+        }
+    }
+
+    function errorOpening(event){
+        toastr.error(event);
+        console.log(event);
+    }
+</script>
+
+<!-- todo submit & delete trigger  -->
+<script>
+    function setFormTimer(){
+        if(!Timer.currentForm.fetched){
+            console.log("Not fetched!!");
+            toastr.warning("Get the form first!");
+            return;
+        }
+
+        var params = {}; //same type as currentForm
+        params.trigger = {};
+
+        Object.assign(params, Timer.currentForm);
+        Object.assign(params.trigger, Timer.currentForm.trigger);
+
+        var openingTime = $("#openingTime").val().trim();
+        var closingTime = $("#closingTime").val().trim();
+
+        if(!openingTime && !closingTime){
+            toastr.warning("Both fields are empty!")
+            return;
+        }
+
+        if(openingTime && new Date(openingTime) < new Date()){
+            toastr.warning("Please choose a later opening time!");
+        }else if(openingTime){
+            params.trigger.openingTime = openingTime;
+        }
+
+        if(closingTime && new Date(closingTime) < new Date()){
+            toastr.warning("Please choose a later closing time!");
+        }else if(closingTime){
+            params.trigger.closingTime = closingTime;
+        }
+
+        
+        params.formUrl = $("#formUrl").val();
+
+        console.log("Prepare to send");
+        console.log("Params", params);
+        console.log("Timer", Timer.currentForm);
+
+        google.script.run
+            .withSuccessHandler(setOpenAndCloseTimeSuccess)
+            .withFailureHandler(setOpenAndCloseTimeFailure)
+            .setOpenAndCloseTime(params); 
+        //todo gì đây chẳng nhớ nữa
+        $(".secondary").prop('disabled', true);
+    }
+
+    function setOpenAndCloseTimeSuccess(params){
+        if(params.hasTrigger){
+            toastr.success("Setup finished!");
+        }else{
+            toastr.warning(params);
+        }
+        console.log("result", params);
+        $(".secondary").prop('disabled', false);
+    }
+    
+    function setOpenAndCloseTimeFailure(error){
+        console.log(error);
+        toastr.error(error);
+        $(".secondary").prop('disabled', false);
+    }
+
+    function removeTimer(){
+
+    }
+</script>
+
+
+<!-- add onClick triggers and other things -->
+<script>
+    $("#btnGetForm").click(requestForm);
+    $("#btnSubmit").click(setFormTimer);
+    $("#btnReset").click(resetForm);
+    $(".secondary").prop('disabled', true);
+    $("#btnDeleteTrigger").click(removeTimer);
+    initTimerObj();
+</script>
