@@ -18,17 +18,25 @@ function checkBirthDay() {
     
     //chay qua tung hang
     for (var row of values){
-      var bd = new Date(row[4]); //tao Date moi dua tren String ngay trong sheet
-      if(row[2].trim() //kiểm tra xem ô chứa tên có giá trị hay không
-         && row[6].trim() //kiểm tra xem ô chứa email có giá trị hay không
-         && bd != null //kiểm tra xem ngày sinh có phải NULL hay không
-         && bd.getDate() == d.getDate() 
-         && bd.getMonth() == d.getMonth()
-         && listMail.indexOf(row[6].trim()) < 0){ //kiem tra xem email có trong list đã gửi hay chưa
-           
-           sendMail(row); //gui mail
-           listMail.push(row[6].trim());
-           console.log(row); //log
+      try {
+        var bd = new Date(row[4]); //tao Date moi dua tren String ngay trong sheet
+        var name = row[2].trim();
+        var email = row[6].trim();
+        if(name //kiểm tra xem ô chứa tên có giá trị hay không
+          // && row[6].trim() //kiểm tra xem ô chứa email có giá trị hay không
+          && checkEmail(email)
+          && bd != null //kiểm tra xem ngày sinh có phải NULL hay không
+          && bd.getDate() == d.getDate() 
+          && bd.getMonth() == d.getMonth()
+          && listMail.indexOf(normalizeEmail(email)) < 0){ //kiem tra xem email có trong list đã gửi hay chưa
+            
+            sendMail(row); //gui mail
+            listMail.push(normalizeEmail(email));
+            console.log(row); //log
+        }
+      } catch (error) {
+        isError = true;
+        console.log(error);
       }
     }
   }
@@ -38,7 +46,8 @@ function checkBirthDay() {
     GmailApp.sendEmail("hhoang.nov.13@gmai.com",
       "Birthday script failure",
       "An execution failed to finish, please check!"
-    )
+    );
+    throw new Error("Something went wrong!");
   }
 }
 
@@ -74,6 +83,28 @@ function sendMail(row){
   }catch(ex){
     console.log(ex);
     isError = true;
+  }
+}
+/**
+ * 
+ * @param {String} email 
+ */
+function normalizeEmail(email){
+  var part1 = email.match(/(.*)@.*/)[1];
+  var part2 = email.replace(part1,"");
+  part1 = part1.replace(/\./g,"");
+  email = part1 + part2;
+  email = email.replace(/(\+[\s\S]*)@/, "@");
+  console.log("Normalized", email);
+  return email;
+}
+
+function checkEmail(email) {
+  try{
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email.trim());
+  }catch(ex){
+    return false;
   }
 }
 
