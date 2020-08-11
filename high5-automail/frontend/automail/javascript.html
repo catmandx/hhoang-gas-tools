@@ -117,7 +117,7 @@
             .withSuccessHandler(setFormAutomailSuccess)
             .withFailureHandler(setFormAutomailFailure)
             .setFormAutomail(params);
-        //todo gì đây chẳng nhớ nữa
+
         $(".secondary").prop('disabled', true);
     }
 
@@ -156,17 +156,21 @@
             .withFailureHandler(removeAutomailFailure)
             .withSuccessHandler(removeAutomailSuccess)
             .removeAutomail(Automail.currentForm);
+        
+        $(".secondary").prop("disabled", true);
     }
 
     function removeAutomailFailure(error){
         toastr.error(error);
         console.log(error);
+        $(".secondary").prop("disabled", false);
     }
 
     function removeAutomailSuccess(event){
-        toastr.success("Automail removed!");
+        toastr.success("Timer removed!");
         $("#btnReset")[0].click();
-        console.log("Automail removed");
+        console.log("Automail removed", event);
+        $(".secondary").prop("disabled", false);
     }
 </script>
 

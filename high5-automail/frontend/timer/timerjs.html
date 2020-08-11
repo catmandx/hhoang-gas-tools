@@ -62,7 +62,7 @@
     }
 </script>
 
-<!-- todo submit & delete trigger  -->
+<!-- submit & delete trigger  -->
 <script>
     function setFormTimer(){
         if(!Timer.currentForm.fetched){
@@ -108,7 +108,7 @@
             .withSuccessHandler(setOpenAndCloseTimeSuccess)
             .withFailureHandler(setOpenAndCloseTimeFailure)
             .setOpenAndCloseTime(params); 
-        //todo gì đây chẳng nhớ nữa
+
         $(".secondary").prop('disabled', true);
     }
 
@@ -129,7 +129,33 @@
     }
 
     function removeTimer(){
+        //check 
+        if(!Timer.currentForm.hasTrigger || !Timer.currentForm.trigger.triggerUid){
+            return;
+        }
+        var accept = window.confirm("Do you want to remove the timers for this form?");
+        if(!accept){
+            return;
+        }
+        //delete automail
+        google.script.run
+            .withFailureHandler(removeTimerFailure)
+            .withSuccessHandler(removeTimerSuccess)
+            .deleteTimer(Timer.currentForm);
+        $(".secondary").prop("disabled", true);
+    }
 
+    function removeTimerFailure(error){
+        toastr.error(error);
+        console.error(error);
+        $(".secondary").prop("disabled", false);
+    }
+
+    function removeTimerSuccess(event){
+        toastr.success("Automail removed!");
+        $("#btnReset")[0].click();
+        console.log("Automail removed");
+        $(".secondary").prop("disabled", false);
     }
 </script>
 

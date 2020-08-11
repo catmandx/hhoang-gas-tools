@@ -1,14 +1,59 @@
 //////////////////////////////////////////
 /**
  * List of functions in this file:
+ * openByUrl(url, feature = "automail")
+ * setFormAutomail(params)
+ * removeAutomail(params)
+ * setOpenAndCloseTime(params)
+ * deleteTimer(params)
  * setAcceptingResponses(trigger)
  */
 //////////////////////////////////////////
 
 /**
- * setup automailing for the form specified
- * in the params object.
+ * Request a form and return the params for this form.
+ * looks up if theres a trigger already set up for
+ * this form
  * 
+ * Called from the client side
+ * @param {String} url : a valid gform url (with /edit)
+ */
+function openByUrl(url, feature = "automail"){
+    var res = {};
+    var form = FormApp.openByUrl(url);
+    var formId = form.getId();
+    var destinationId = "";
+    try {
+        destinationId = form.getDestinationId();
+    } catch (error) {
+        console.log(error);
+    }
+
+    var params = {}
+
+    //find triggers associated with this form and feature
+    var triggers = ScriptApp.getProjectTriggers();
+    for (const trigger of triggers) {
+        let sourceId = trigger.getTriggerSourceId();
+        if(sourceId == destinationId){
+            params = getArguments(trigger.getUniqueId());
+            if(params.feature == feature){
+                params.hasTrigger = true;
+                break;
+            }else{
+                params = {};
+            }
+        }
+    }
+
+    params.formName = form.getTitle();
+    return params;
+}
+
+/**
+ * Setup automailing for the form specified
+ * in the params object.
+ * Called from the client side
  * params has the same structure as Automail.currentForm
  * @param {*} params 
  */
@@ -46,6 +91,11 @@ function setFormAutomail(params){
     }
 }
 
+/**
+ * Delete the automail trigger associated with this form
+ * Called from client-side
+ * @param {*} params 
+ */
 function removeAutomail(params){
     if(!params.hasTrigger || !params.trigger.triggerUid){
         return;
@@ -55,103 +105,21 @@ function removeAutomail(params){
 }
 
 /**
- * triggered
- * fetch a property with id and accepting
- * @param {Trigger} trigger : time-driven event object
- */
-function setAcceptingResponses(trigger){
-    //delete trigger & property
-    var params = handleTriggered(trigger.triggerUid);
-    params.hasTrigger = false;
-
-    console.log("Set accepting responses", params);
-    var form = FormApp.openByUrl(params.formUrl);
-    var whichIsRunning = ""; //openingTime or closingTime
-    if(params.trigger.openingTime && params.trigger.closingTime){
-        //check if which comes first
-        var openDate = new Date(params.trigger.openingTime);
-        var closeDate = new Date(params.trigger.closingTime);
-        if(openDate <= closeDate){
-            //this function runs at openingTime
-            whichIsRunning = "openingTime";
-        }else{
-            //this function runs at closingTime
-            whichIsRunning = "closingTime";
-        }
-    }else if(params.trigger.openingTime){
-        //this function runs at openingTime
-        whichIsRunning = "openingTime";
-    }else if(params.trigger.closingTime){
-        //this function runs at closingTime
-        whichIsRunning = "closingTime";
-    }
-
-    if(whichIsRunning == "closingTime"){
-        form.setAcceptingResponses(false);
-        console.log("Form disabled!");
-    }else if(whichIsRunning == "openingTime"){
-        form.setAcceptingResponses(true);
-        console.log("Form enabled!");
-    }
-
-    delete params.trigger[whichIsRunning];
-
-    setOpenAndCloseTime(params);
-}
-
-/**
- * Request a form.
- * looks up if theres a trigger already set up for
- * this form
- * @param {String} url : a valid gform url (with /edit)
- */
-function openByUrl(url, feature = "automail"){
-    var res = {};
-    var form = FormApp.openByUrl(url);
-    var formId = form.getId();
-    var destinationId = "";
-    try {
-        destinationId = form.getDestinationId();
-    } catch (error) {
-        console.log(error);
-    }
-
-    var params = {}
-
-    //find triggers associated with this form and feature
-    var triggers = ScriptApp.getProjectTriggers();
-    for (const trigger of triggers) {
-        let sourceId = trigger.getTriggerSourceId();
-        if(sourceId == destinationId){
-            params = getArguments(trigger.getUniqueId());
-            if(params.feature == feature){
-                params.hasTrigger = true;
-                break;
-            }else{
-                params = {};
-            }
-        }
-    }
-
-    params.formName = form.getTitle();
-    return params;
-}
-
-/**
- * Set open or close time
+ * Set up a trigger open or close time, whichever comes first
+ * called from client-side or this side
  * @param {GoogleAppsScript.Forms.Form} form 
  * @param {Date} time : the specified time
  * @param {Boolean} accepting : true (open) or false (close)
- *  Timer.currentForm = {};
-    Timer.currentForm.fetched = false;
-    Timer.currentForm.feature = "timer";
-    Timer.currentForm.formUrl = "";
-    Timer.currentForm.formName = "";
-    Timer.currentForm.hasTrigger = false;
-    Timer.currentForm.trigger = {};
-    Timer.currentForm.trigger.triggerUid = "";
-    Timer.currentForm.trigger.openingTime = "";
-    Timer.currentForm.trigger.closingTime = "";
+ *  params = {};
+    params.fetched = false;
+    params.feature = "timer";
+    params.formUrl = "";
+    params.formName = "";
+    params.hasTrigger = false;
+    params.trigger = {};
+    params.trigger.triggerUid = "";
+    params.trigger.openingTime = "";
+    params.trigger.closingTime = "";
  */
 function setOpenAndCloseTime(params){
     console.log("Set open and close time", params);
@@ -212,19 +180,65 @@ function setOpenAndCloseTime(params){
     return params;
 }
 
-function testSetAcceptingForm(){
-    var params = { formUrl: 'https://docs.google.com/forms/d/1AfYPSl2l5QzYLe0L1wtfp9PX2tEctgiPBzw0a7_Vo98/edit',
-        formName: 'tét am',
-        trigger: 
-        { closingTime: '2020-08-08T21:19',
-            triggerUid: '7599013154796619918',
-            openingTime: '' },
-        hasTrigger: true,
-        feature: 'timer',
-        fetched: true 
-    };
-    var whichIsRunning = "closingTime";
+/**
+ * Delete the timer trigger associated with this form
+ * Called from client-side
+
+ * @param {*} params 
+ */
+function deleteTimer(params){
+    if(!params.hasTrigger || !params.trigger.triggerUid){
+        return;
+    }
+    
+    deleteTriggerByUid(params.trigger.triggerUid);
+}
+
+/**
+ * Trigger function
+ * toggle AcceptingResponse status depends on the 
+ * time it runs (is openingTime or closingTime).
+ * 
+ * If theres still openingTime or closingTime
+ * -> call setOpenAndCloseTime() again
+ * @param {*} trigger : time-driven event object
+ */
+function setAcceptingResponses(trigger){
+    //delete trigger & property
+    var params = handleTriggered(trigger.triggerUid);
+    params.hasTrigger = false;
+
+    console.log("Set accepting responses", params);
+    var form = FormApp.openByUrl(params.formUrl);
+    var whichIsRunning = ""; //openingTime or closingTime
+    if(params.trigger.openingTime && params.trigger.closingTime){
+        //check if which comes first
+        var openDate = new Date(params.trigger.openingTime);
+        var closeDate = new Date(params.trigger.closingTime);
+        if(openDate <= closeDate){
+            //this function runs at openingTime
+            whichIsRunning = "openingTime";
+        }else{
+            //this function runs at closingTime
+            whichIsRunning = "closingTime";
+        }
+    }else if(params.trigger.openingTime){
+        //this function runs at openingTime
+        whichIsRunning = "openingTime";
+    }else if(params.trigger.closingTime){
+        //this function runs at closingTime
+        whichIsRunning = "closingTime";
+    }
+
+    if(whichIsRunning == "closingTime"){
+        form.setAcceptingResponses(false);
+        console.log("Form disabled!");
+    }else if(whichIsRunning == "openingTime"){
+        form.setAcceptingResponses(true);
+        console.log("Form enabled!");
+    }
+
     delete params.trigger[whichIsRunning];
-    console.log(params);
-    console.log(!!params.trigger.openingTime);
+
+    setOpenAndCloseTime(params);
 }

@@ -1,3 +1,19 @@
+//////////////////////////////////////////
+/**
+ * List of functions in this file:
+ * getRowsData(sheet, range, columnHeadersRowIndex)
+ * getObjects(data, keys)
+ * normalizeHeaders(headers)
+ * normalizeHeader(header)
+ * isCellEmpty(cellData)
+ * isAlnum(char)
+ * isDigit(char)
+ * sendEmails() //default function, not used
+ * fillInTemplateFromObject(template, data) //modified
+ * sendAutomail(trigger) //my custom function
+ */
+//////////////////////////////////////////
+
 /**
  * Iterates row by row in the input range and returns an array of objects.
  * Each object contains all the data for a given row, indexed by its normalized column name.
@@ -191,7 +207,6 @@ function fillInTemplateFromObject(template, data) {
  */
 function sendAutomail(trigger){
     try {
-        //todo
         //get params stored in UserProperties
         var params = handleTriggered(trigger.triggerUid);
         console.log(params);
@@ -272,18 +287,18 @@ function sendAutomail(trigger){
         GmailApp.sendEmail(recipient, subject, body, options);
 
     } catch (error) {
-        var sheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1sIeFppDrIw5MK6fxf0Nn6MyiPJB4hTNX944W3zcdN_U/edit#gid=0")
+        let sheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1sIeFppDrIw5MK6fxf0Nn6MyiPJB4hTNX944W3zcdN_U/edit#gid=0")
         .getSheetByName("Sheet1");
         sheet.appendRow([error.message]);
         
-        var range = trigger.range;
+        let range = trigger.range;
         sheet = range.getSheet();
-        var range1 = sheet.getRange(range.getRow(), range.getNumColumns()+1);
+        let range1 = sheet.getRange(range.getRow(), range.getNumColumns()+1);
         range1.setValue(error);
         console.log(error);
     }
     //todo logging and reporting
-    var sheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1sIeFppDrIw5MK6fxf0Nn6MyiPJB4hTNX944W3zcdN_U/edit#gid=0")
+        let sheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1sIeFppDrIw5MK6fxf0Nn6MyiPJB4hTNX944W3zcdN_U/edit#gid=0")
         .getSheetByName("Sheet1");
         sheet.appendRow(["completed"]);
 

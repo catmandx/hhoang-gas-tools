@@ -86,3 +86,20 @@ function testGetDataFromSheet(){
         console.log(error);
     }
 }
+
+function testSetAcceptingForm(){
+    var params = { formUrl: 'https://docs.google.com/forms/d/1AfYPSl2l5QzYLe0L1wtfp9PX2tEctgiPBzw0a7_Vo98/edit',
+        formName: 'tét am',
+        trigger: 
+        { closingTime: '2020-08-08T21:19',
+            triggerUid: '7599013154796619918',
+            openingTime: '' },
+        hasTrigger: true,
+        feature: 'timer',
+        fetched: true 
+    };
+    var whichIsRunning = "closingTime";
+    delete params.trigger[whichIsRunning];
+    console.log(params);
+    console.log(!!params.trigger.openingTime);
+}

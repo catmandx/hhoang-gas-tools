@@ -2,10 +2,11 @@
 /**
  * List of functions in this file:
  * doGet()
+ * logout()
  * include(filename)
  * getEmail()
- * openByUrl(url)
- * setOpenOrCloseTime(form, time, accepting)
+ * deleteAllProperties()
+ * getAllProperties()
  */
 //////////////////////////////////////////
 
@@ -45,6 +46,9 @@ function doGet(e) {
     .setFaviconUrl('https://high5hanoi.edu.vn/wp-content/uploads/2020/08/Logo-High53-Custom.png');
 }
 
+/**
+ * Deauth the web app and NOT signout users google account
+ */
 function logout(){
     var triggers = ScriptApp.getProjectTriggers();
     for(const trigger of triggers){
@@ -62,6 +66,7 @@ function logout(){
     Logger.log(res.getResponseCode());
     return res.getResponseCode();
 }
+
 /**
  * used to include javascript.html and css.html
  * into index.html
@@ -79,7 +84,10 @@ function getEmail() {
     return Session.getActiveUser().getEmail();
 }
 
-
+/**
+ * Caution: using this function might render
+ * the web app unusable and the triggers to fail.
+ */
 function deleteAllProperties(){
     var properties = PropertiesService.getUserProperties();
     getAllProperties();

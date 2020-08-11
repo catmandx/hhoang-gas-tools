@@ -1,10 +1,12 @@
 //////////////////////////////////////////
 /**
  * List of functions in this file:
- * generateOptionTags()
+ * generateDraftsOptionTags()
  * getDraftsInfo()
  * generateAliasesOptionTags()
  * getDraftBodyById(draftId)
+ * getDraftPlainBodyById(draftId)
+ * isHtmlEmail(draftId, body, plainBody)
  */
 //////////////////////////////////////////
 
@@ -44,9 +46,7 @@ function generateDraftsOptionTags() {
 /**
  * Get drafts from Gmail
  * @returns arr
- * 
  * arr = [dr1, dr2, etc];
- * 
  * dr1 = {
  *  id: "r-xxxxx",
  *  subject: "Subject",
@@ -57,7 +57,7 @@ function generateDraftsOptionTags() {
 function getDraftsInfo() {
     var drafts = GmailApp.getDrafts();
     if(drafts.length < 20){
-        return GmailApp.getDrafts().map(draft => {
+        return drafts.map(draft => {
             return {
                 id: draft.getId(),
                 subject: draft.getMessage().getSubject(),
@@ -68,7 +68,7 @@ function getDraftsInfo() {
             };
         });
     }else{
-        return GmailApp.getDrafts().map(draft => {
+        return drafts.map(draft => {
             return {
                 id: draft.getId(),
                 subject: draft.getMessage().getSubject(),
