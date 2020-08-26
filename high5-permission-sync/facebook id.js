@@ -4,7 +4,27 @@
 *  @library_key: M1lugvAXKKtUxn_vdAG9JZleS6DrsjUUV
 */
 
+/**
+ * custom function for Google Sheets
+ * @param {string} url 
+ */
+function GETFACEBOOKID(url){
+  url = url.replace("facebook","m.facebook");
+  url = url.replace("m.m.", "m.");
+  url = url.replace("www.","");
+  console.log(url);
 
+  var fromText = 'rid=';
+  var toText = '&';
+
+  var content = UrlFetchApp.fetch(url).getContentText();
+  var scraped = data(content)
+                  .from(fromText)
+                  .to(toText)
+                  .build();
+  Logger.log(scraped);
+  return scraped;
+}
 
 var Parser_ = function(content) {
     this.content = content;

@@ -3,18 +3,32 @@ function onOpen(e){
   .addItem("Manual sync", "checkActiveMembers").addToUi();
 }
 
+var onChange = "onChange";
+var timeDriven = "time-driven";
+var manual = "manual";
+/**
+ * onChange, time-driven trigger
+ * or manually
+ * @param {*} e 
+ */
 function checkActiveMembers(e){
   if(e && SpreadsheetApp.getActiveSheet().getName() != "Active Members"){ 
-    //if running from onEdit trigger, check if editing Active Member list
+    //if running from onChange trigger, check if editing Active Member list
     return;
   }
 
-  var allowedChangeType = ["EDIT", "INSERT_ROW", "INSERT_COLUMN", "REMOVE_ROW", "REMOVE_COLUMN", "INSERT_GRID", "REMOVE_GRID"];
-  if(e && allowedChangeType.includes(e.changeType)){
-    console.log(e.changeType);
-  }else if(e && !allowedChangeType.includes(e.changeType)){
-    console.log(e.changeType);
-    return;
+  let triggerType = manual;
+  if(e && e.changeType){
+    triggerType = onChange;
+    let allowedChangeType = ["EDIT", "INSERT_ROW", "INSERT_COLUMN", "REMOVE_ROW", "REMOVE_COLUMN", "INSERT_GRID", "REMOVE_GRID"];
+    if(allowedChangeType.includes(e.changeType)){
+      console.log(e.changeType);
+    }else{
+      console.log(e.changeType);
+      return;
+    }
+  }else if(e){
+    triggerType = timeDriven;
   }
 
   //get active members spreadsheet and sheet
@@ -147,69 +161,4 @@ function checkEmail(email) {
   }catch(ex){
     return false;
   }
-}
-
-function GETFACEBOOKID(url){
-  url = url.replace("facebook","m.facebook");
-  url = url.replace("m.m.", "m.");
-  url = url.replace("www.","");
-  console.log(url);
-
-  var fromText = 'rid=';
-  var toText = '&';
-
-  var content = UrlFetchApp.fetch(url).getContentText();
-  var scraped = data(content)
-                  .from(fromText)
-                  .to(toText)
-                  .build();
-  Logger.log(scraped);
-  return scraped;
-}
-
-function checkActiveMembersOld(e) { //OnEdit trigger //periodic trigger
-  // if(e && SpreadsheetApp.getActiveSheet().getName() != "Active Members"){ //if running from onEdit trigger, check if editing Active Member list
-  //   return;
-  // }
-  // //get active members spreadsheet and sheet
-  // var ss = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/11IcDpPKb-CXlN724c9J5PbickjgoSIQkFJwlgi2-LIA/edit");
-  // var sheet = ss.getSheetByName("Active Members");
-  // var syncSheets = ["https://docs.google.com/spreadsheets/d/11IcDpPKb-CXlN724c9J5PbickjgoSIQkFJwlgi2-LIA/edit",
-  // "https://docs.google.com/spreadsheets/d/1-ZGqLy2Qn4jtPt8TJYaEArK4TwYyRkRYxYgDu4C_eyA/edit"];
-  
-  // for (const sheetLink of syncSheets) {
-  //   var orderSheet = SpreadsheetApp.openByUrl(sheetLink);
-
-  //   var activeMembersList = ["high5hanoi@gmail.com", "cm.high5hanoi@gmail.com", "hrhigh5hanoi@gmail.com", "mdhigh5material@gmail.com",
-  //                   "edhigh5hanoi@gmail.com", "high5hanoi.edu.vn@gmail.com", "hhoang.nov.13@gmail.com"];
-  //   var ordersSheetEditorsList = [];
-
-  //   orderSheet.getEditors().forEach((user) => ordersSheetEditorsList.push(user.getEmail()));
-    
-  //   sheet.getRange("activeMembersList").getValues().forEach((row) => {
-  //     if(checkEmail(row[0].trim())){
-  //       activeMembersList.push(row[0].toLowerCase());
-  //     }
-  //   });
-    
-  //   var editorsToAdd = activeMembersList.filter(el => ordersSheetEditorsList.indexOf(el) < 0);
-    
-  //   var editorsToRemove = ordersSheetEditorsList.filter(email => activeMembersList.indexOf(email) < 0);
-    
-  //   console.log("Start adding");
-  //   editorsToAdd.forEach((email) => {
-  //     console.log(email)
-  //     try{
-  //       orderSheet.addEditor(email)
-  //     }catch(ex){console.log(ex)}
-  //   });
-    
-  //   console.log("Start removing");
-  //   editorsToRemove.forEach((email) => {
-  //     console.log(email)
-  //     try{
-  //       orderSheet.removeEditor(email)
-  //     }catch(ex){console.log(ex)}
-  //   });
-  // }
 }

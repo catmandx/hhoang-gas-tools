@@ -1,1 +1,10 @@
 .clasp.json
+node_modules/**/.*
+node_modules/**/.*/**
+.jshintrc
+.vscode/**/.*
+test.js
+test/
+Serenity-booking-manager/
+gas.code-workspace
+**node_modules
