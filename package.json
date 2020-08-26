@@ -1,0 +1,20 @@
+{
+  "name": "high5-gas-automation",
+  "description": "Collection of scripts for High5 Hanoi",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/catmandx/hhoang-gas-tools.git"
+  },
+  "author": "Hoang Nguyen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/catmandx/hhoang-gas-tools/issues"
+  },
+  "homepage": "https://github.com/catmandx/hhoang-gas-tools#readme",
+  "devDependencies": {
+    "@types/google-apps-script": "^1.0.14"
+  }
+}
